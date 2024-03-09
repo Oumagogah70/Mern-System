@@ -4,11 +4,13 @@ import { errorHandler } from '../utils/error.js';
 import jwt from 'jsonwebtoken';
 
 export const signup = async (req, res, next) => {
-  const { username, email, password } = req.body;
+  const { username, names,contact,email, password } = req.body;
 
   if (
     !username ||
     !email ||
+    !names ||
+    !contact ||
     !password ||
     username === '' ||
     email === '' ||
@@ -22,6 +24,8 @@ export const signup = async (req, res, next) => {
   const newUser = new User({
     username,
     email,
+    names,
+    contact,
     password: hashedPassword,
   });
 

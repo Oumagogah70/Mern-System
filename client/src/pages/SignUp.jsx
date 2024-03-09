@@ -1,20 +1,47 @@
 import React,{useState} from 'react'
 import { Link,useNavigate } from 'react-router-dom';
 import {Label,TextInput,Button, Spinner,Alert } from 'flowbite-react'
-import OAuth from '../components/OAuth';
+// import nodemailer from 'nodemailer';
+
 export default function SignUp() {
 
   const [formData, setFormData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
+  // const sendEmail = async (email, password) => {
+  //   const transporter = nodemailer.createTransport({
+  //     service: 'gmail',
+  //     auth: {
+  //       user: 'gordon.intern@dropaccess.org',
+  //       pass: '8244@GOGAH.DATA',
+  //     },
+  //   });
+
+  //   const mailOptions = {
+  //     from: 'gordon.intern@dropaccess.org',
+  //     to: email,
+  //     subject: 'Account Created Successfully',
+  //     text: `Your account has been created successfully. Your password is: ${password}`,
+  //   };
+
+  //   transporter.sendMail(mailOptions, (error, info) => {
+  //     if (error) {
+  //       console.error('Error sending email:', error);
+  //     } else {
+  //       console.log('Email sent:', info.response);
+  //     }
+  //   });
+  // };
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.username || !formData.email || !formData.password) {
+    if (!formData.username || !formData.names || !formData.contact|| !formData.email || !formData.password) {
       return setErrorMessage('Please fill out all fields.');
     }
     try {
@@ -31,7 +58,8 @@ export default function SignUp() {
       }
       setLoading(false);
       if(res.ok) {
-        navigate('/sign-in');
+        // sendEmail(formData.email, formData.password);
+        navigate('/dashboard?tab=users');
       }
     } catch (error) {
       setErrorMessage(error.message);
@@ -43,19 +71,6 @@ export default function SignUp() {
   return (
     <div className='min-h-screen mt-20'>
     <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
-      {/* left */}
-      <div className='flex-1'>
-        <Link to='/' className='font-bold dark:text-white text-4xl'>
-          <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
-            Drop Access
-          </span>
-          
-        </Link>
-        <p className='text-sm mt-5'>
-          This is a drop access project. You can sign up with your email and password
-          or with Google.
-        </p>
-      </div>
       {/* right */}
 
       <div className='flex-1'>
@@ -67,6 +82,24 @@ export default function SignUp() {
               type='text'
               placeholder='Username'
               id='username'
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label value='Your names' />
+            <TextInput
+              type='text'
+              placeholder='names'
+              id='names'
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label value='Your contacts' />
+            <TextInput
+              type='number'
+              placeholder='contact'
+              id='contact'
               onChange={handleChange}
             />
           </div>
@@ -103,14 +136,9 @@ export default function SignUp() {
             )}
             
           </Button>
-          <OAuth />
+        
         </form>
-        <div className='flex gap-2 text-sm mt-5'>
-          <span>Have an account?</span>
-          <Link to='/sign-in' className='text-blue-500'>
-            Sign In
-          </Link>
-        </div>
+        
         {errorMessage && (
           <Alert className='mt-5' color='failure'>
             {errorMessage}

@@ -99,6 +99,15 @@ export default function DashSidebar() {
                   Accounts
                 </Sidebar.Item>
               </Link>
+              <Link to='/dashboard?tab=payments'>
+                <Sidebar.Item
+                  active={tab === 'payments'}
+                  icon={HiAnnotation}
+                  as='div'
+                >
+                  Payments
+                </Sidebar.Item>
+              </Link>
               <Link to='/dashboard?tab=voucher'>
                 <Sidebar.Item
                   active={tab === 'voucher'}
@@ -191,6 +200,15 @@ export default function DashSidebar() {
                   as='div'
                 >
                   Profile
+                </Sidebar.Item>
+              </Link>
+              <Link to='/dashboard?tab=payments'>
+                <Sidebar.Item
+                  active={tab === 'payments'}
+                  icon={HiAnnotation}
+                  as='div'
+                >
+                  Payments
                 </Sidebar.Item>
               </Link>
               <Link to='/dashboard?tab=voucher'>

@@ -15,6 +15,8 @@ import DashboardAccount from '../components/DashboardAccount';
 import DashboardMaintenance from '../components/DashboardMaintenance';
 import DashboardForm from '../components/DashboardForm';
 import DashboardReport from '../components/DashboardReport';
+import DashboardPayments from '../components/DashboardPayments';
+
 
 export default function Dashboard() {
   const location = useLocation();
@@ -52,6 +54,7 @@ export default function Dashboard() {
       {tab === 'perdm' && <DashboardPerdm/>}
       {tab === 'timesheet' && <DashboardTime/>}
       {tab === 'vaccibox' && <DashboardVaccibox/>}
+      {tab === 'payments' && <DashboardPayments/>}
       {tab === 'accounts' && <DashboardAccount/>}
       {tab=== 'maintenance' && <DashboardMaintenance/>}
       {tab === 'form' && <DashboardForm/>}

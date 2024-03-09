@@ -2,8 +2,14 @@ import React, { useState,useEffect } from "react";
 import {useNavigate} from 'react-router-dom';
 import { Select} from "flowbite-react";
 import { useSelector } from "react-redux";
+// import dotenv from 'dotenv'
+// dotenv.config();
+// import twilio from 'twilio';
+
+
 
 export default function CreateVoucher() {
+
   const currentUser = useSelector((state)=> state.user.currentUser)
   const [items, setItems] = useState([]);
   const [itemName, setItemName] = useState("");
@@ -15,6 +21,8 @@ export default function CreateVoucher() {
   const [person, setPerson] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState('')
   const navigate = useNavigate()
+  
+  
   
 
   useEffect(()=>{
@@ -71,6 +79,19 @@ export default function CreateVoucher() {
     return item.price * item.quantity;
   };
 
+
+  const sendSMS = async(contactNumber, smsBody)=>{
+    const accountSid = 'AC67c967e0cc3075d2cb1bf6540488b330';
+    const authToken = 'bc01990f15afd7ee40684f98dc2bf34f';
+    // const client = twilio(accountSid,authToken)
+    client.messages.create({
+        from:'+12133772696',
+        body:smsBody,
+        to:`+254${contactNumber.substring(1)}`,
+      })
+      .then(message => console.log(message.sid));
+     
+  }
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
@@ -84,6 +105,10 @@ export default function CreateVoucher() {
             sentBy: currentUser?.username || " "
           };
           console.log(data)
+          const resUser = await fetch(`/api/user/${selectedPerson}`);
+          const userData = await resUser.json();
+          const contactNumber = userData.contact;
+          console.log(contactNumber)
         const res = await fetch('/api/voucher/create',{
             method:'POST',
             headers:{
@@ -93,6 +118,9 @@ export default function CreateVoucher() {
         })
         
         if(res.ok){
+          // Send SMS notification
+          const smsBody = `Your voucher has been created with items: ${items.map(item => `${item.name} (${item.quantity} x ${item.price})`).join(', ')}. Total Price: ${totalPrice}`;
+          await sendSMS(contactNumber,smsBody)
             //handle succesful response
             alert('Voucher saved');
             setItems([]);

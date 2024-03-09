@@ -19,6 +19,7 @@ import CreateMaintance from "./pages/CreateMaintance";
 import CreateReport from "./pages/CreateReport";
 import CreateForm from "./pages/CreateForm";
 import UpdateVoucher from "./pages/UpdateVoucher";
+import CreatePayments from "./pages/CreatePayments";
 export default function App() {
   return (
     <BrowserRouter>
@@ -42,6 +43,11 @@ export default function App() {
         <Route
           path="/update-perdm/:perdmId"
           element={<UpdatePerdm />}
+          allowedRoles={["admin", "staff"]}
+        />
+        <Route
+          path="/payments"
+          element={<CreatePayments />}
           allowedRoles={["admin", "staff"]}
         />
         <Route

@@ -221,10 +221,24 @@ export default function DashProfile() {
           onChange={handleChange}
         />
         <TextInput
+          type='text'
+          id='names'
+          placeholder='names'
+          defaultValue={currentUser.names}
+          onChange={handleChange}
+        />
+        <TextInput
           type='email'
           id='email'
           placeholder='email'
           defaultValue={currentUser.email}
+          onChange={handleChange}
+        />
+        <TextInput
+          type='number'
+          id='contact'
+          placeholder='contact'
+          defaultValue={currentUser.contact}
           onChange={handleChange}
         />
         <TextInput
@@ -241,7 +255,7 @@ export default function DashProfile() {
         >
           {loading ? 'Loading...' : 'Update'}
         </Button>
-        {currentUser.isAdmin && (
+        {currentUser.role === 'admin' && (
           <Link to={'/create-post'}>
             <Button
               type='button'
