@@ -81,8 +81,7 @@ export default function CreateVoucher() {
 
 
   const sendSMS = async(contactNumber, smsBody)=>{
-    const accountSid = 'AC67c967e0cc3075d2cb1bf6540488b330';
-    const authToken = 'bc01990f15afd7ee40684f98dc2bf34f';
+   
     // const client = twilio(accountSid,authToken)
     client.messages.create({
         from:'+12133772696',
