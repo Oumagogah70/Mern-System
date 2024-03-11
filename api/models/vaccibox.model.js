@@ -1,4 +1,4 @@
-import mongoose  from "mongoose";
+const mongoose =require("mongoose");
 
 const vacciboxSchema = new mongoose.Schema({
     createdBy:{
@@ -32,4 +32,4 @@ const vacciboxSchema = new mongoose.Schema({
 );
 
 const Vaccibox = mongoose.model('Vaccibox', vacciboxSchema);
-export default Vaccibox 
+module.exports =Vaccibox 

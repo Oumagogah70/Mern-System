@@ -1,9 +1,9 @@
-import User from "../models/user.model.js";
-import Perdm from "../models/perdm.model.js";
-import jwt from "jsonwebtoken";
-import { errorHandler } from "../utils/error.js";
+const User =require( "../models/user.model.js");
+const Perdm =require( "../models/perdm.model.js");
+const jwt =require( "jsonwebtoken");
+const { errorHandler } =require("../utils/error.js");
 
-export const getUsersPerdm = async (req, res) => {
+const getUsersPerdm = async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -13,7 +13,7 @@ export const getUsersPerdm = async (req, res) => {
   }
 };
 
-export const createPerdm = async (req, res, next) => {
+const createPerdm = async (req, res, next) => {
   try {
     const {
       sentTo,
@@ -47,7 +47,7 @@ export const createPerdm = async (req, res, next) => {
   }
 };
 
-export const getPerdms = async (req, res) => {
+const getPerdms = async (req, res) => {
   if (!req.user || (req.user.role !== "admin" && req.user.role !== "staff")) {
     return res.status(403).json({ message: "Forbidden" });
   }
@@ -98,7 +98,7 @@ export const getPerdms = async (req, res) => {
 };
 
 
-export const getPerdm = async(req,res,next) =>{
+const getPerdm = async(req,res,next) =>{
   try {
     const perdm = await Perdm.findById(req.params.perdmId)
     .populate('sentBy','username')
@@ -113,7 +113,7 @@ export const getPerdm = async(req,res,next) =>{
   }
 }
 
-export const updateStatus = async(req,res)=>{
+const updateStatus = async(req,res)=>{
   const {id} = req.params;
   const {status} =req.body;
 
@@ -133,3 +133,5 @@ export const updateStatus = async(req,res)=>{
     
   }
 }
+
+module.exports ={getUsersPerdm, createPerdm, getPerdms, getPerdm, updateStatus};

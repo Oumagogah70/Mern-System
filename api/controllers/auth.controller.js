@@ -1,9 +1,9 @@
-import User from '../models/user.model.js';
-import bcryptjs from 'bcryptjs';
-import { errorHandler } from '../utils/error.js';
-import jwt from 'jsonwebtoken';
+const User =require('../models/user.model.js');
+const bcryptjs =require('bcryptjs');
+const { errorHandler } =require('../utils/error.js');
+const jwt =require('jsonwebtoken');
 
-export const signup = async (req, res, next) => {
+const signup = async (req, res, next) => {
   const { username, names,contact,email, password } = req.body;
 
   if (
@@ -37,7 +37,7 @@ export const signup = async (req, res, next) => {
   }
 };
 
-export const signin = async (req, res, next) => {
+const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password || email === '' || password === '') {
@@ -73,7 +73,7 @@ export const signin = async (req, res, next) => {
   }
 };
 
-export const google = async (req, res, next) => {
+const google = async (req, res, next) => {
   const { email, name, googlePhotoUrl } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -128,6 +128,8 @@ export const google = async (req, res, next) => {
   }
 };
 
-export const authMiddle = async(req,res)=>{
+const authMiddle = async(req,res)=>{
   res.status(200).json({user:req.user})
 }
+
+module.exports ={signup, signin, google, authMiddle}

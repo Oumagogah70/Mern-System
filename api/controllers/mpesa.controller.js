@@ -1,5 +1,4 @@
-import express from "express";
-import Mpesa from "mpesa-node";
+const Mpesa  =require("mpesa-node");
 
 const mpesa = new Mpesa({
   consumerKey: process.env.CONSUMER_KEY,

@@ -1,10 +1,10 @@
-import express from 'express';
-import { getUsersPerdm,createPerdm,getPerdms,updateStatus, getPerdm } from '../controllers/perdm.controller.js';
-import passport from '../utils/passport.js';
-import { verifyToken } from '../utils/verifyUser.js';
+const express =require('express');
+const { getUsersPerdm,createPerdm,getPerdms,updateStatus, getPerdm } =require( '../controllers/perdm.controller.js');
+const passport =require( '../utils/passport.js');
+const { verifyToken } =require( '../utils/verifyUser.js');
 
 
-const router = express.Router()
+const router = express.Router();
 
 router.get('/getusersperdm', getUsersPerdm)
 router.get('/getperdms', verifyToken,getPerdms)
@@ -12,4 +12,4 @@ router.get('/:perdmId',getPerdm)
 router.post('/createperdm', createPerdm)
 router.put('/:id/updatestatus',updateStatus)
 
-export default router
+module.exports =router;

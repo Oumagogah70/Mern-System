@@ -1,10 +1,10 @@
-import express  from "express";
-import {createSignIn,createSignOut,getTimeSheet } from '../controllers/timesheet.controller.js'
-const router = express.Router()
-import { verifyToken } from '../utils/verifyUser.js';
+const express =require('express');
+const {createSignIn,createSignOut,getTimeSheet } =require('../controllers/timesheet.controller.js');
+const { verifyToken } =require('../utils/verifyUser.js');
 
+const router = express.Router()
 router.post('/createtimesheetin',createSignIn)
 router.post('/createtimesheetout',createSignOut)
 router.get('/gettimesheet',verifyToken,getTimeSheet)
 
-export default router
+module.exports =router;

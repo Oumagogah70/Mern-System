@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose =require("mongoose");
 
 const itemSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -27,4 +27,4 @@ const Voucher = mongoose.model("Voucher", voucherSchema);
 
 const Item = mongoose.model("Item", itemSchema);
 
-export { Voucher, Item };
+module.exports ={ Voucher, Item };
