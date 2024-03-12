@@ -1,41 +1,50 @@
-const { Voucher, Item } =require( "../models/voucher.model.js");
 const User =require( "../models/user.model.js");
-const Perdm =require( "../models/perdm.model.js")
+const Perdm =require( "../models/perdm.model.js");
 const { errorHandler } =require( "../utils/error.js");
-const { NetworkContextImpl } =require( "twilio/lib/rest/supersim/v1/network.js");
+const { Voucher, Item } =require( "../models/voucher.model.js");
+const OutboundNotificationsService =require('../services/OutboundNotificationsService.js');
+const { HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK } = require("../utils/http_status_codes.js");
 
 const test = (req, res) => {
   res.json({ message: "API is working!" });
 };
 
-const create = async (req, res, next) => {
+const create = async (req, res) => {
   try {
-    const { items, sentTo, sentBy, totalPrice, totalQuantity } = req.body;
+    const { payload, recipient_id, sender_id} = req.body;
+
     //check if person is an object (selected =require( a list) or a string(manually entered)
+    const sender = await User.findById(sender_id);
+    const receiver = await User.findById(recipient_id);
 
-    const sentByTo = await User.findOne({ username: sentTo });
-    const sentFrom = await User.findOne({ username: sentBy });
+    if(sender && receiver){
+      const newItemPromises = payload.map(async (item) => { //create new items instances
+        const newItem = new Item(item);
+        await newItem.save();
+        return newItem;
+      });
+      
+      const totalQuantity =payload.reduce((acc, {quantity}) =>{return acc +parseInt(quantity)}, 0);
+      const totalPrice =payload.reduce((acc, {price, quantity}) =>{return acc +(parseFloat(price) *parseInt(quantity))}, 0);
 
-    //create new items instances
-    const newItemPromises = items.map(async (item) => {
-      const newItem = new Item(item);
-      await newItem.save();
-      return newItem;
-    });
+      const newItems = await Promise.all(newItemPromises); // wait for all item instance to be saved
+      const newVoucher = new Voucher({
+          items: newItems,
+          sentTo: receiver._id,
+          sentBy: sender._id,
+          totalPrice,
+          totalQuantity,
+        });
+        await newVoucher.save();
+        const {status, message} =await OutboundNotificationsService.sendsmsNotifications({
+          phone: receiver.contact,
+          message: `Dear ${receiver.names}, you have a voucher from ${sender.names}`
+        });
+        return status ==HTTP_200_OK? res.status(HTTP_201_CREATED).json({ message: "Voucher created successfully" }): res.status(status).json({message});
+    }
 
-    // wait for all item instance to be saved
-    const newItems = await Promise.all(newItemPromises);
+    return res.status(HTTP_400_BAD_REQUEST).json({message: "Missing user details"})
 
-    //create a new voucher instance
-    const newVoucher = new Voucher({
-      items: newItems,
-      sentTo: sentByTo._id,
-      sentBy: sentFrom._id,
-      totalPrice,
-      totalQuantity,
-    });
-    await newVoucher.save();
-    res.status(201).json({ message: "Voucher created successfully" });
   } catch (error) {
     console.error("Failed to create voucher", error);
     res.status(500).json({ message: "Failed to create voucher" });
