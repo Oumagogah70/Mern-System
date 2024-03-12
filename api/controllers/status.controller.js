@@ -7,10 +7,10 @@ export const getApprovedStatus = async (req, res) => {
     try { 
         const approvedVouchers = await Voucher.find({ status: 'approved' })
         .populate('sentTo', 'username') 
-        .populate('sentBy', 'username'); 
+        .populate('sentBy', 'username contact'); 
       const approvedPerdms = await Perdm.find({ status: 'approved' })
         .populate('sentTo', 'username') 
-        .populate('sentBy', 'username'); 
+        .populate('sentBy', 'username contact'); 
         const approvedPayments = await Payments.find({ status: 'approved' })
         .populate('sentTo', 'username') 
         .populate('sentBy', 'username'); 

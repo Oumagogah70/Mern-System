@@ -13,7 +13,7 @@ export default function CreatePayments() {
     accountNumber: "",
     tillNumber: "",
     phoneNumber: "",
-    amount: "",
+    totalPrice: "",
     reason: "",
     sentTo: "",
     sentBy: currentUser?.username || "",
@@ -35,6 +35,7 @@ export default function CreatePayments() {
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(formData)
     setFormData({ ...formData, [name]: value });
   };
   const handleSubmit = async (e) => {
@@ -52,7 +53,7 @@ export default function CreatePayments() {
           type: selectedOption,
           paybillNumber: formData.paybillNumber,
           accountNumber: formData.accountNumber,
-          amount: formData.amount,
+          totalPrice: formData.totalPrice,
           reason: formData.reason,
           sentBy: formData.sentBy,
           sentTo: formData.sentTo,
@@ -63,7 +64,7 @@ export default function CreatePayments() {
         requestData = {
           type: selectedOption,
           tillNumber: formData.tillNumber,
-          amount: formData.amount,
+          totalPrice: formData.totalPrice,
           reason: formData.reason,
           sentBy: formData.sentBy,
           sentTo: formData.sentTo,
@@ -74,7 +75,7 @@ export default function CreatePayments() {
         requestData = {
           type: selectedOption,
           phoneNumber: formData.phoneNumber,
-          amount: formData.amount,
+          totalPrice: formData.totalPrice,
           reason: formData.reason,
           sentBy: formData.sentBy,
           sentTo: formData.sentTo,
@@ -102,7 +103,7 @@ export default function CreatePayments() {
         accountNumber: "",
         tillNumber: "",
         phoneNumber: "",
-        amount: "",
+        totalPrice: "",
         reason: "",
         sentTo: "",
         sentBy: currentUser?.username || "",
@@ -177,8 +178,8 @@ export default function CreatePayments() {
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="number"
-              name="amount"
-              value={formData.amount}
+              name="totalPrice"
+              value={formData.totalPrice}
               onChange={handleChange}
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             />
@@ -240,8 +241,8 @@ export default function CreatePayments() {
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="number"
-              name="amount"
-              value={formData.amount}
+              name="totalPrice"
+              value={formData.totalPrice}
               onChange={handleChange}
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             />
@@ -304,8 +305,8 @@ export default function CreatePayments() {
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="number"
-              name="amount"
-              value={formData.amount}
+              name="totalPrice"
+              value={formData.totalPrice}
               onChange={handleChange}
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             />

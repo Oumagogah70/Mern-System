@@ -29,37 +29,57 @@ export default function Dashboard() {
     }
   }, [location.search]);
   return (
+    // <>
+    //   <Header />
+    //   <div className="min-h-screen flex flex-col md:flex-row">
+    //     <div className="md:w-56">
+    //       {/* Sidebar */}
+    //       <DashSidebar />
+    //     </div>
+    //     <div className="md:ml-3 md:mt-0 flex-1">
+    //       {/* Content */}
+    //       {tab === 'profile' && <DashProfile />}
+    //       {tab === 'posts' && <DashPosts />}
+    //       {tab === 'users' && <DashUsers />}
+    //       {tab === 'comments' && <DashComments />}
+    //       {tab === 'dash' && <DashboardComp />}
+    //       {tab === 'voucher' && <DashboardVoucher />}
+    //       {tab === 'perdm' && <DashboardPerdm />}
+    //       {tab === 'timesheet' && <DashboardTime />}
+    //       {tab === 'vaccibox' && <DashboardVaccibox />}
+    //       {tab === 'payments' && <DashboardPayments />}
+    //       {tab === 'accounts' && <DashboardAccount />}
+    //       {tab === 'maintenance' && <DashboardMaintenance />}
+    //       {tab === 'form' && <DashboardForm />}
+    //       {tab === 'reports' && <DashboardReport />}
+    //     </div>
+    //   </div>
+    // </>
     <>
-    <Header/>
-    <div className='min-h-screen flex flex-col md:flex-row'>
-   
-      <div className='md:w-56'>
+    <Header />
+    <div className="min-h-screen flex flex-col md:flex-row">
+      <div className="md:w-56">
         {/* Sidebar */}
         <DashSidebar />
       </div>
-      {/* profile... */}
-      {tab === 'profile' && <DashProfile />}
-      {/* posts... */}
-      {tab === 'posts' && <DashPosts />}
-      {/* users */}
-      {tab === 'users' && <DashUsers />}
-      {/* comments  */}
-      {tab === 'comments' && <DashComments />}
-      {/* dashboard comp */}
-      {tab === 'dash' && <DashboardComp />}
-
-      {/* dashboard voucher */}
-      {tab === 'voucher' && <DashboardVoucher />}
-      {/* dashboard perdm */}
-      {tab === 'perdm' && <DashboardPerdm/>}
-      {tab === 'timesheet' && <DashboardTime/>}
-      {tab === 'vaccibox' && <DashboardVaccibox/>}
-      {tab === 'payments' && <DashboardPayments/>}
-      {tab === 'accounts' && <DashboardAccount/>}
-      {tab=== 'maintenance' && <DashboardMaintenance/>}
-      {tab === 'form' && <DashboardForm/>}
-      {tab === 'reports' && <DashboardReport/>}
+      <div className="flex-1 md:ml-3">
+        {/* Content */}
+        {tab === 'profile' && <DashProfile />}
+        {tab === 'posts' && <DashPosts />}
+        {tab === 'users' && <DashUsers />}
+        {tab === 'comments' && <DashComments />}
+        {tab === 'dash' && <DashboardComp />}
+        {tab === 'voucher' && <DashboardVoucher />}
+        {tab === 'perdm' && <DashboardPerdm />}
+        {tab === 'timesheet' && <DashboardTime />}
+        {tab === 'vaccibox' && <DashboardVaccibox />}
+        {tab === 'payments' && <DashboardPayments />}
+        {tab === 'accounts' && <DashboardAccount />}
+        {tab === 'maintenance' && <DashboardMaintenance />}
+        {tab === 'form' && <DashboardForm />}
+        {tab === 'reports' && <DashboardReport />}
+      </div>
     </div>
-    </>
+  </>
   );
 }

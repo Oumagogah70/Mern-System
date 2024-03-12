@@ -13,6 +13,7 @@ import vacciboxRoutes from './routes/vaccibox.route.js'
 import reportRoutes from './routes/report.route.js'
 import statusRoutes from './routes/status.route.js'
 import paymentsRoutes from './routes/payments.route.js'
+import smsRoutes from './routes/sms.route.js'
 
 dotenv.config();
 
@@ -44,3 +45,4 @@ app.use('/api/vaccibox/',vacciboxRoutes)
 app.use('/api/report',reportRoutes)
 app.use('/api/status',statusRoutes)
 app.use('/api/payments', paymentsRoutes)
+app.use('/api/sms',smsRoutes)

@@ -50,30 +50,91 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="border-b-2">
-      <Link
-        to="/"
-        className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
-      >
-        <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
-          Drop Access
-        </span>
+  
+    // <Navbar className="border-b-2 ">
+    //   <Link
+    //     to="/"
+    //     className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
+    //   >
+    //     <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
+    //       Drop Access
+    //     </span>
         
-      </Link>
-      <form onSubmit={handleSubmit}>
-        <TextInput
-          type="text"
-          placeholder="Search..."
-          rightIcon={AiOutlineSearch}
-          className="hidden lg:inline"
+    //   </Link>
+    //   <form onSubmit={handleSubmit}>
+    //     <TextInput
+    //       type="text"
+    //       placeholder="Search..."
+    //       rightIcon={AiOutlineSearch}
+    //       className="hidden lg:inline"
+    //         value={searchTerm}
+    //         onChange={(e) => setSearchTerm(e.target.value)}
+    //     />
+    //   </form>
+    //   <Button className="w-12 h-10 lg:hidden" color="gray" pill>
+    //     <AiOutlineSearch />
+    //   </Button>
+
+    //   <div className="flex gap-2 md:order-2">
+    //     <Button
+    //       className="w-12 h-10 hidden sm:inline"
+    //       color="gray"
+    //       pill
+    //       onClick={() => dispatch(toggleTheme())}
+    //     >
+    //       {theme === 'light' ? <FaSun /> : <FaMoon />}
+          
+    //     </Button>
+    //     {currentUser ? (
+    //       <Dropdown
+    //         arrowIcon={false}
+    //         inline
+    //         label={
+    //           <Avatar alt='user' img={currentUser.profilePicture} rounded />
+    //         }
+    //       >
+    //         <Dropdown.Header>
+    //           <span className='block text-sm'>@{currentUser.username}</span>
+    //           <span className='block text-sm font-medium truncate'>
+    //             {currentUser.email}
+    //           </span>
+    //         </Dropdown.Header>
+    //         <Link to={'/dashboard?tab=profile'}>
+    //           <Dropdown.Item>Profile</Dropdown.Item>
+    //         </Link>
+    //         <Dropdown.Divider />
+    //         <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
+    //       </Dropdown>
+    //     ) : (
+    //     <Link to="/sign-in">
+    //       <Button gradientDuoTone="purpleToBlue" outline>
+    //         Sign In
+    //       </Button>
+    //     </Link>)}
+    //     <Navbar.Toggle />
+    //   </div>
+      
+    // </Navbar>
+    <Navbar className="border-b-2">
+      <Navbar.Brand className="flex justify-between items-center w-full px-3">
+        <form onSubmit={handleSubmit} className="w-full">
+          <TextInput
+            type="text"
+            placeholder="Search..."
+            rightIcon={AiOutlineSearch}
+            className="hidden lg:inline"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </form>
-      <Button className="w-12 h-10 lg:hidden" color="gray" pill>
-        <AiOutlineSearch />
-      </Button>
-
+          />
+        </form>
+        <Button
+          className="w-12 h-10 lg:hidden"
+          color="gray"
+          pill
+        >
+          <AiOutlineSearch />
+        </Button>
+      </Navbar.Brand>
       <div className="flex gap-2 md:order-2">
         <Button
           className="w-12 h-10 hidden sm:inline"
@@ -82,7 +143,6 @@ export default function Header() {
           onClick={() => dispatch(toggleTheme())}
         >
           {theme === 'light' ? <FaSun /> : <FaMoon />}
-          
         </Button>
         {currentUser ? (
           <Dropdown
@@ -105,14 +165,15 @@ export default function Header() {
             <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
           </Dropdown>
         ) : (
-        <Link to="/sign-in">
-          <Button gradientDuoTone="purpleToBlue" outline>
-            Sign In
-          </Button>
-        </Link>)}
+          <Link to="/sign-in">
+            <Button gradientDuoTone="purpleToBlue" outline>
+              Sign In
+            </Button>
+          </Link>
+        )}
         <Navbar.Toggle />
       </div>
-      
     </Navbar>
+    
   );
 }

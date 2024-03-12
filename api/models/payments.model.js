@@ -31,7 +31,7 @@ const paymentsSchema = new mongoose.Schema(
         return this.type === "phonenumber";
       },
     },
-    amount: {
+    totalPrice: {
       type: Number,
       required: true,
     },

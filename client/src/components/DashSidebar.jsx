@@ -1,4 +1,4 @@
-import { Sidebar } from 'flowbite-react';
+import { Sidebar } from "flowbite-react";
 import {
   HiUser,
   HiArrowSmRight,
@@ -7,37 +7,37 @@ import {
   HiAnnotation,
   HiChartPie,
   HiOutlineCog,
-  HiOutlineCash
-} from 'react-icons/hi';
-import { useEffect, useState } from 'react';
-import { Link, useLocation,useNavigate } from 'react-router-dom';
-import { signoutSuccess } from '../redux/user/userSlice';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-
+  HiOutlineCash,
+} from "react-icons/hi";
+import { GiExpense } from "react-icons/gi";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { signoutSuccess } from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 export default function DashSidebar() {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
-  const [tab, setTab] = useState('');
+  const [tab, setTab] = useState("");
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const tabFromUrl = urlParams.get('tab');
+    const tabFromUrl = urlParams.get("tab");
     if (tabFromUrl) {
       setTab(tabFromUrl);
     }
   }, [location.search]);
   const handleSignout = async () => {
     try {
-      const res = await fetch('/api/user/signout', {
-        method: 'POST',
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
       });
       const data = await res.json();
       if (res.ok) {
-        dispatch(signoutSuccess()); 
-        navigate('/')
+        dispatch(signoutSuccess());
+        navigate("/");
       } else {
         console.log(data.message);
       }
@@ -45,260 +45,266 @@ export default function DashSidebar() {
       console.log(error.message);
     }
   };
-  
+
   return (
-    <Sidebar className='w-full md:w-56'>
+    <Sidebar className="w-full md:w-56 "> 
       <Sidebar.Items>
-        <Sidebar.ItemGroup className='flex flex-col gap-1'>
-          {currentUser && currentUser.role === 'admin' && (
+        <Sidebar.ItemGroup className="flex flex-col gap-1">
+          {currentUser && currentUser.role === "admin" && (
             <>
-              <Link to='/dashboard?tab=dash'>
+              <Link to="/dashboard?tab=dash">
                 <Sidebar.Item
-                  active={tab === 'dash' || !tab}
+                  active={tab === "dash" || !tab}
                   icon={HiChartPie}
-                  as='div'
+                  as="div"
                 >
                   Dashboard
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=profile'>
+              <Link to="/dashboard?tab=profile">
                 <Sidebar.Item
-                  active={tab === 'profile'}
+                  active={tab === "profile"}
                   icon={HiUser}
-                  label='Admin'
-                  labelColor='dark'
-                  as='div'
+                  label="Admin"
+                  labelColor="dark"
+                  as="div"
                 >
                   Profile
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=users'>
+              <Link to="/dashboard?tab=users">
                 <Sidebar.Item
-                  active={tab === 'users'}
+                  active={tab === "users"}
                   icon={HiOutlineUserGroup}
-                  as='div'
+                  as="div"
                 >
                   Users
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=posts'>
+              <Link to="/dashboard?tab=posts">
                 <Sidebar.Item
-                  active={tab === 'posts'}
+                  active={tab === "posts"}
                   icon={HiDocumentText}
-                  as='div'
+                  as="div"
                 >
                   Posts
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=accounts'>
+              <Sidebar.Collapse icon={GiExpense} label="Payments">
+              <Link to="/dashboard?tab=accounts">
                 <Sidebar.Item
-                  active={tab === 'accounts'}
+                  active={tab === "accounts"}
                   icon={HiAnnotation}
-                  as='div'
+                  as="div"
                 >
                   Accounts
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=payments'>
+              <Link to="/dashboard?tab=payments">
                 <Sidebar.Item
-                  active={tab === 'payments'}
+                  active={tab === "payments"}
                   icon={HiAnnotation}
-                  as='div'
+                  as="div"
                 >
                   Payments
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=voucher'>
+              <Link to="/dashboard?tab=voucher">
                 <Sidebar.Item
-                  active={tab === 'voucher'}
+                  active={tab === "voucher"}
                   icon={HiOutlineCash}
-                  as='div'
+                  as="div"
                 >
                   Vouchers
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=perdm'>
+              <Link to="/dashboard?tab=perdm">
                 <Sidebar.Item
-                  active={tab === 'perdm'}
+                  active={tab === "perdm"}
                   icon={HiOutlineCash}
-                  as='div'
+                  as="div"
                 >
                   Perdm
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=timesheet'>
+              </Sidebar.Collapse>
+              <Sidebar.Collapse label="Maintenance">
+              <Link to="/dashboard?tab=vaccibox">
                 <Sidebar.Item
-                  active={tab === 'timesheet'}
+                  active={tab === "vaccibox"}
                   icon={HiAnnotation}
-                  as='div'
-                >
-                  Timesheet
-                </Sidebar.Item>
-              </Link>
-              <Link to='/dashboard?tab=form'>
-                <Sidebar.Item
-                  active={tab === 'form'}
-                  icon={HiAnnotation}
-                  as='div'
-                >
-                  Forms
-                </Sidebar.Item>
-              </Link>
-              <Link to='/dashboard?tab=vaccibox'>
-                <Sidebar.Item
-                  active={tab === 'vaccibox'}
-                  icon={HiAnnotation}
-                  as='div'
+                  as="div"
                 >
                   Vaccibox
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=maintenance'>
+              <Link to="/dashboard?tab=maintenance">
                 <Sidebar.Item
-                  active={tab === 'maintenance'}
+                  active={tab === "maintenance"}
                   icon={HiOutlineCog}
-                  as='div'
+                  as="div"
                 >
                   Maintenance
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=reports'>
+              </Sidebar.Collapse>
+              <Link to="/dashboard?tab=timesheet">
                 <Sidebar.Item
-                  active={tab === 'reports'}
+                  active={tab === "timesheet"}
                   icon={HiAnnotation}
-                  as='div'
+                  as="div"
+                >
+                  Timesheet
+                </Sidebar.Item>
+              </Link>
+              <Link to="/dashboard?tab=form">
+                <Sidebar.Item
+                  active={tab === "form"}
+                  icon={HiAnnotation}
+                  as="div"
+                >
+                  Forms
+                </Sidebar.Item>
+              </Link>
+              <Link to="/dashboard?tab=reports">
+                <Sidebar.Item
+                  active={tab === "reports"}
+                  icon={HiAnnotation}
+                  as="div"
                 >
                   Reports
                 </Sidebar.Item>
               </Link>
               <Sidebar.Item
                 icon={HiArrowSmRight}
-                className='cursor-pointer'
+                className="cursor-pointer"
                 onClick={handleSignout}
               >
                 Sign Out
               </Sidebar.Item>
             </>
           )}
-          {currentUser && currentUser.role === 'staff' && (
+          {currentUser && currentUser.role === "staff" && (
             <>
-              <Link to='/dashboard?tab=dash'>
+              <Link to="/dashboard?tab=dash">
                 <Sidebar.Item
-                  active={tab === 'dash' || !tab}
+                  active={tab === "dash" || !tab}
                   icon={HiChartPie}
-                  as='div'
+                  as="div"
                 >
                   Dashboard
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=profile'>
+              <Link to="/dashboard?tab=profile">
                 <Sidebar.Item
-                  active={tab === 'profile'}
+                  active={tab === "profile"}
                   icon={HiUser}
-                  label='Staff'
-                  labelColor='dark'
-                  as='div'
+                  label="Staff"
+                  labelColor="dark"
+                  as="div"
                 >
                   Profile
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=payments'>
+              <Sidebar.Collapse label="E-commerce">
+                <Link to="/dashboard?tab=payments">
+                  <Sidebar.Item
+                    active={tab === "payments"}
+                    icon={HiAnnotation}
+                    as="div"
+                  >
+                    Payments
+                  </Sidebar.Item>
+                </Link>
+                <Link to="/dashboard?tab=voucher">
+                  <Sidebar.Item
+                    active={tab === "voucher"}
+                    icon={HiAnnotation}
+                    as="div"
+                  >
+                    Vouchers
+                  </Sidebar.Item>
+                </Link>
+                <Link to="/dashboard?tab=perdm">
+                  <Sidebar.Item
+                    active={tab === "perdm"}
+                    icon={HiAnnotation}
+                    as="div"
+                  >
+                    Perdm
+                  </Sidebar.Item>
+                </Link>
+              </Sidebar.Collapse>
+              <Link to="/dashboard?tab=timesheet">
                 <Sidebar.Item
-                  active={tab === 'payments'}
+                  active={tab === "timesheet"}
                   icon={HiAnnotation}
-                  as='div'
-                >
-                  Payments
-                </Sidebar.Item>
-              </Link>
-              <Link to='/dashboard?tab=voucher'>
-                <Sidebar.Item
-                  active={tab === 'voucher'}
-                  icon={HiAnnotation}
-                  as='div'
-                >
-                  Vouchers
-                </Sidebar.Item>
-              </Link>
-              <Link to='/dashboard?tab=perdm'>
-                <Sidebar.Item
-                  active={tab === 'perdm'}
-                  icon={HiAnnotation}
-                  as='div'
-                >
-                  Perdm
-                </Sidebar.Item>
-              </Link>
-              <Link to='/dashboard?tab=timesheet'>
-                <Sidebar.Item
-                  active={tab === 'timesheet'}
-                  icon={HiAnnotation}
-                  as='div'
+                  as="div"
                 >
                   Timesheet
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=form'>
+              <Link to="/dashboard?tab=form">
                 <Sidebar.Item
-                  active={tab === 'form'}
+                  active={tab === "form"}
                   icon={HiAnnotation}
-                  as='div'
+                  as="div"
                 >
                   Forms
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=vaccibox'>
+              <Link to="/dashboard?tab=vaccibox">
                 <Sidebar.Item
-                  active={tab === 'vaccibox'}
+                  active={tab === "vaccibox"}
                   icon={HiAnnotation}
-                  as='div'
+                  as="div"
                 >
                   Vaccibox
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=maintenance'>
+              <Link to="/dashboard?tab=maintenance">
                 <Sidebar.Item
-                  active={tab === 'maintenance'}
+                  active={tab === "maintenance"}
                   icon={HiAnnotation}
-                  as='div'
+                  as="div"
                 >
                   Maintenance
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=reports'>
+              <Link to="/dashboard?tab=reports">
                 <Sidebar.Item
-                  active={tab === 'reports'}
+                  active={tab === "reports"}
                   icon={HiAnnotation}
-                  as='div'
+                  as="div"
                 >
                   Reports
                 </Sidebar.Item>
               </Link>
               <Sidebar.Item
                 icon={HiArrowSmRight}
-                className='cursor-pointer'
+                className="cursor-pointer"
                 onClick={handleSignout}
               >
                 Sign Out
               </Sidebar.Item>
             </>
           )}
-          {currentUser && currentUser.role === 'user' && (
+          {currentUser && currentUser.role === "user" && (
             <>
-              <Link to='/dashboard?tab=profile'>
+              <Link to="/dashboard?tab=profile">
                 <Sidebar.Item
-                  active={tab === 'profile'}
+                  active={tab === "profile"}
                   icon={HiUser}
-                  label='User'
-                  labelColor='dark'
-                  as='div'
+                  label="User"
+                  labelColor="dark"
+                  as="div"
                 >
                   Profile
                 </Sidebar.Item>
               </Link>
               <Sidebar.Item
                 icon={HiArrowSmRight}
-                className='cursor-pointer'
+                className="cursor-pointer"
                 onClick={handleSignout}
               >
                 Sign Out

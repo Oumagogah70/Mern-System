@@ -72,7 +72,7 @@ export default function DashboardPayments() {
                 <Table.Cell>{payment.sentTo.username}</Table.Cell>
                 <Table.Cell>{payment.sentBy.username}</Table.Cell>
                 <Table.Cell>{payment.type}</Table.Cell>
-                <Table.Cell>Ksh: {payment.amount}/=</Table.Cell>
+                <Table.Cell>Ksh: {payment.totalPrice}/=</Table.Cell>
                 <Table.Cell>
                 <span
                     className={`px-2 py-1 rounded ${

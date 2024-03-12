@@ -33,6 +33,9 @@ export default function DashboardAccount() {
             <Table.HeadCell>Date created</Table.HeadCell>
             <Table.HeadCell>Sent To</Table.HeadCell>
             <Table.HeadCell>Sent By</Table.HeadCell>
+            <Table.HeadCell>Reciept</Table.HeadCell>
+            <Table.HeadCell>Paybill</Table.HeadCell>
+            <Table.HeadCell>A/C No:</Table.HeadCell>
             <Table.HeadCell>Type</Table.HeadCell>
             <Table.HeadCell>Total Amount</Table.HeadCell>
             <Table.HeadCell>Status</Table.HeadCell>
@@ -46,6 +49,9 @@ export default function DashboardAccount() {
                 </Table.Cell>
                 <Table.Cell>{item.sentTo.username}</Table.Cell>
                 <Table.Cell>{item.sentBy.username}</Table.Cell>
+                <Table.Cell>{item.sentBy.contact || item.phoneNumber} </Table.Cell>
+                <Table.Cell>{item.paybillNumber || item.tillNumber}</Table.Cell>
+                <Table.Cell>{item.accountNumber}</Table.Cell>
                 <Table.Cell>{item.type}</Table.Cell>
                 <Table.Cell>Ksh: {item.totalPrice}/=</Table.Cell>
                 <Table.Cell>

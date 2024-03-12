@@ -1,16 +1,11 @@
-import React, { useState,useEffect } from "react";
-import {useNavigate} from 'react-router-dom';
-import { Select} from "flowbite-react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Select } from "flowbite-react";
 import { useSelector } from "react-redux";
-// import dotenv from 'dotenv'
-// dotenv.config();
-// import twilio from 'twilio';
-
-
+// import { Configuration, SmsApi } from 'infobip-node';
 
 export default function CreateVoucher() {
-
-  const currentUser = useSelector((state)=> state.user.currentUser)
+  const currentUser = useSelector((state) => state.user.currentUser);
   const [items, setItems] = useState([]);
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
@@ -19,33 +14,28 @@ export default function CreateVoucher() {
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [person, setPerson] = useState([]);
-  const [selectedPerson, setSelectedPerson] = useState('')
-  const navigate = useNavigate()
-  
-  
-  
+  const [selectedPerson, setSelectedPerson] = useState("");
+  const navigate = useNavigate();
 
-  useEffect(()=>{
-    const fetchUsers = async()=>{
+  useEffect(() => {
+    const fetchUsers = async () => {
       try {
         const res = await fetch(`/api/perdm/getusersperdm`);
         const data = await res.json();
         setPerson(data);
-        
       } catch (error) {
         console.error(error);
-        
       }
     };
     fetchUsers();
-  },[])
+  }, []);
   const addItemToList = () => {
     if (itemName && itemPrice > 0 && itemQuantity > 0) {
       const newItem = {
         name: itemName,
         price: itemPrice,
         quantity: itemQuantity,
-        description: itemDescription
+        description: itemDescription,
       };
       setItems([...items, newItem]);
       setTotalPrice((prevPrice) => prevPrice + itemPrice * itemQuantity);
@@ -79,66 +69,61 @@ export default function CreateVoucher() {
     return item.price * item.quantity;
   };
 
-
-  const sendSMS = async(contactNumber, smsBody)=>{
-   
-    // const client = twilio(accountSid,authToken)
-    client.messages.create({
-        from:'+12133772696',
-        body:smsBody,
-        to:`+254${contactNumber.substring(1)}`,
-      })
-      .then(message => console.log(message.sid));
-     
-  }
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const data = {
-            items: items,
-            itemPrice: itemPrice,
-            itemQuantity: itemQuantity,
-            totalPrice: totalPrice,
-            totalQuantity: totalQuantity,
-            sentTo: selectedPerson,
-            sentBy: currentUser?.username || " "
-          };
-          console.log(data)
-          const resUser = await fetch(`/api/user/${selectedPerson}`);
-          const userData = await resUser.json();
-          const contactNumber = userData.contact;
-          console.log(contactNumber)
-        const res = await fetch('/api/voucher/create',{
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-        
-        if(res.ok){
-          // Send SMS notification
-          const smsBody = `Your voucher has been created with items: ${items.map(item => `${item.name} (${item.quantity} x ${item.price})`).join(', ')}. Total Price: ${totalPrice}`;
-          await sendSMS(contactNumber,smsBody)
-            //handle succesful response
-            alert('Voucher saved');
-            setItems([]);
-            setTotalPrice(0);
-            setTotalQuantity(0);
-            setPerson('');
+      const data = {
+        items: items,
+        itemPrice: itemPrice,
+        itemQuantity: itemQuantity,
+        totalPrice: totalPrice,
+        totalQuantity: totalQuantity,
+        sentTo: selectedPerson,
+        sentBy: currentUser?.username || " ",
+      };
+      console.log(data);
+      const resUser = await fetch(`/api/user/${selectedPerson}`);
+      const userData = await resUser.json();
+      const contactNumber = userData.contact;
+      console.log(contactNumber);
+      const res = await fetch("/api/voucher/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-            //Redirect to dashboard
-            navigate('/dashboard?tab=voucher')
-        }
-        else{
-            //handle error response
-            const errData = await res.json();
-            alert('failed to add voucher');
-        }
+      if (res.ok) {
+        // Send SMS notification
+        const smsBody = `Your voucher has been created with items: ${items
+          .map((item) => `${item.name} (${item.quantity} x ${item.price})`)
+          .join(", ")}. Total Price: Ksh ${totalPrice}/=`;
+        await fetch("/api/sms/send-sms", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phone: contactNumber, message: smsBody }),
+        });
+
+        //handle succesful response
+        alert("Voucher saved");
+        setItems([]);
+        setTotalPrice(0);
+        setTotalQuantity(0);
+        setPerson("");
+
+        //Redirect to dashboard
+        navigate("/dashboard?tab=voucher");
+      } else {
+        //handle error response
+        const errData = await res.json();
+        alert("failed to add voucher");
+      }
     } catch (error) {
-        console.error('Failed to save items', error);
-        alert('Failed to save tems.please try again later')
-        
+      console.error("Failed to save items", error);
+      alert("Failed to save tems.please try again later");
     }
     setPerson([]);
   };
@@ -150,10 +135,10 @@ export default function CreateVoucher() {
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="relative z-0 w-full mb-5 group">
-        <Select
+          <Select
             name="userName"
             value={selectedPerson}
-            onChange={(e)=> setSelectedPerson(e.target.value)}
+            onChange={(e) => setSelectedPerson(e.target.value)}
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
           >
             {person.map((user) => (
@@ -218,13 +203,16 @@ export default function CreateVoucher() {
           Add Item
         </button>
         <div className="relative overflow-x-auto">
-        <h5 className="text-center text-3xl my-7 font-semibold">Items List</h5>
+          <h5 className="text-center text-3xl my-7 font-semibold">
+            Items List
+          </h5>
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 <th scope="col" className="px-6 py-3 ">
                   Item Name
-                </th><th scope="col" className="px-6 py-3 ">
+                </th>
+                <th scope="col" className="px-6 py-3 ">
                   Item description
                 </th>
                 <th scope="col" className="px-6 py-3 ">
@@ -259,15 +247,17 @@ export default function CreateVoucher() {
               ))}
             </tbody>
           </table>
-         
-         
         </div>
         <div>
           <p>Total Price: {totalPrice}</p>
           <p>Total Quantity: {totalQuantity}</p>
         </div>
-        <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >Submit</button>
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );
