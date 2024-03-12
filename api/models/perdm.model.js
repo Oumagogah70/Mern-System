@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose =require("mongoose");
 
 const perdmSchema = new mongoose.Schema(
     {
@@ -44,5 +44,4 @@ const perdmSchema = new mongoose.Schema(
 );
 
 const Perdm = mongoose.model('Perdm', perdmSchema);
-
-export default Perdm;
+module.exports =Perdm;

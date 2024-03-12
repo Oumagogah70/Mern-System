@@ -1,9 +1,9 @@
-import Payments from "../models/payments.model.js";
-import Perdm from "../models/perdm.model.js";
-import { Voucher } from "../models/voucher.model.js";
+const Payments =require("../models/payments.model.js");
+const Perdm =require("../models/perdm.model.js");
+const { Voucher } =require("../models/voucher.model.js");
 
 
-export const getApprovedStatus = async (req, res) => {
+const getApprovedStatus = async (req, res) => {
     try { 
         const approvedVouchers = await Voucher.find({ status: 'approved' })
         .populate('sentTo', 'username') 
@@ -21,3 +21,5 @@ export const getApprovedStatus = async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   }
+
+module.exports ={getApprovedStatus};

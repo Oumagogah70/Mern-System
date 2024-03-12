@@ -1,17 +1,17 @@
-import { Voucher, Item } from "../models/voucher.model.js";
-import User from "../models/user.model.js";
-import Perdm from "../models/perdm.model.js"
-import { errorHandler } from "../utils/error.js";
-import { NetworkContextImpl } from "twilio/lib/rest/supersim/v1/network.js";
+const { Voucher, Item } =require( "../models/voucher.model.js");
+const User =require( "../models/user.model.js");
+const Perdm =require( "../models/perdm.model.js")
+const { errorHandler } =require( "../utils/error.js");
+const { NetworkContextImpl } =require( "twilio/lib/rest/supersim/v1/network.js");
 
-export const test = (req, res) => {
+const test = (req, res) => {
   res.json({ message: "API is working!" });
 };
 
-export const create = async (req, res, next) => {
+const create = async (req, res, next) => {
   try {
     const { items, sentTo, sentBy, totalPrice, totalQuantity } = req.body;
-    //check if person is an object (selected from a list) or a string(manually entered)
+    //check if person is an object (selected =require( a list) or a string(manually entered)
 
     const sentByTo = await User.findOne({ username: sentTo });
     const sentFrom = await User.findOne({ username: sentBy });
@@ -42,7 +42,7 @@ export const create = async (req, res, next) => {
   }
 };
 
-export const getVouchers = async (req, res, next) => {
+const getVouchers = async (req, res, next) => {
   if (!req.user || (req.user.role !== "admin" && req.user.role !== "staff")) {
     return res.status(403).json({ message: "Forbidden" });
   }
@@ -81,7 +81,7 @@ export const getVouchers = async (req, res, next) => {
   }
 };
 
-export const updateStatus = async (req, res) => {
+const updateStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
@@ -100,7 +100,8 @@ export const updateStatus = async (req, res) => {
     res.status(500).json({ message: "Failed to update status" });
   }
 };
-export const getVoucher = async (req, res, next) => {
+
+const getVoucher = async (req, res, next) => {
   try {
     const voucher = await Voucher.findById(req.params.voucherId)
       .populate("sentBy", "username")
@@ -114,4 +115,4 @@ export const getVoucher = async (req, res, next) => {
   }
 };
 
-
+module.exports ={test, create, getVouchers, updateStatus, getVoucher}

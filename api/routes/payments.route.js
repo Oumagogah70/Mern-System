@@ -1,10 +1,10 @@
-import express from 'express'
-import { createPayments, getPayments } from '../controllers/payments.controller.js';
-import { verifyToken } from '../utils/verifyUser.js';
+const express =require('express');
+const { createPayments, getPayments } =require('../controllers/payments.controller.js');
+const { verifyToken } =require( '../utils/verifyUser.js');
 
 const router = express.Router();
 
-router.post('/createpayments',createPayments)
-router.get('/getpayments', verifyToken,getPayments)
+router.post('/createpayments', createPayments);
+router.get('/getpayments', verifyToken,getPayments);
 
-export default router
+module.exports =router;

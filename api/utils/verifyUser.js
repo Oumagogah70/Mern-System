@@ -1,10 +1,10 @@
-import jwt from 'jsonwebtoken';
-import { errorHandler } from './error.js';
-import User from '../models/user.model.js';
+const jwt =require('jsonwebtoken');
+const { errorHandler } =require('./error.js');
+const User =require('../models/user.model.js');
 
-export const verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   const token = req.cookies.access_token;
-  const decoded = jwt.decode(token)
+  const decoded = jwt.decode(token);
   console.log(decoded)
   if (!token) {
     return next(errorHandler(401, 'Unauthorized'));
@@ -20,7 +20,7 @@ export const verifyToken = (req, res, next) => {
 };
 
 
-export const authMiddleware = async(req,res, next)=>{
+const authMiddleware = async(req,res, next)=>{
   try {
     const token = req.header.authorization.split(' ')[i];
     if(!token){
@@ -43,3 +43,5 @@ export const authMiddleware = async(req,res, next)=>{
     
   }
 }
+
+module.exports ={verifyToken, authMiddleware};

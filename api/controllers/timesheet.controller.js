@@ -1,7 +1,7 @@
-import TimeSheet from "../models/timesheet.model.js";
-import User from "../models/user.model.js";
+const TimeSheet =require("../models/timesheet.model.js");
+const User =require("../models/user.model.js");
 
-export const createSignIn = async(req,res) =>{
+const createSignIn = async(req,res) =>{
     const {time, user} = req.body;
 
     try {
@@ -17,7 +17,7 @@ export const createSignIn = async(req,res) =>{
 
 }
 
-export const createSignOut = async(req,res) =>{
+const createSignOut = async(req,res) =>{
    const {time, user} = req.body;
    try {
     const newTime = new TimeSheet({time,type:'sign-out',user});
@@ -31,7 +31,7 @@ export const createSignOut = async(req,res) =>{
 }
 
 
-export const getTimeSheet = async (req, res) => {
+const getTimeSheet = async (req, res) => {
     try {
       let timeSheetRecords;
       if (req.user.role === 'admin') {
@@ -53,4 +53,5 @@ export const getTimeSheet = async (req, res) => {
       res.status(500).json({ message: 'Failed to fetch timesheet records' });
     }
   };
-  
+
+module.exports ={createSignIn, createSignOut, getTimeSheet};

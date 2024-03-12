@@ -1,7 +1,7 @@
-import User from "../models/user.model.js";
-import Vaccibox from "../models/vaccibox.model.js";
+const User =require("../models/user.model.js");
+const Vaccibox =require("../models/vaccibox.model.js");
 
-export const createVaccibox = async(req,res,next)=>{
+const createVaccibox = async(req,res,next)=>{
     try {
         const{
             createdBy,
@@ -29,7 +29,7 @@ export const createVaccibox = async(req,res,next)=>{
     }
 };
 
-export const getVaccibox = async(req,res) =>{
+const getVaccibox = async(req,res) =>{
     if(!req.user ||(req.user.role !== 'admin' && req.user.role !=='staff')){
         return res.status(403).json({message:"Forbidden"});
     }
@@ -74,3 +74,5 @@ export const getVaccibox = async(req,res) =>{
         
     }
 }
+
+module.exports ={getVaccibox, createVaccibox};

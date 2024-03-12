@@ -1,8 +1,8 @@
-import Reports from "../models/report.model.js";
-import User from "../models/user.model.js";
-import { errorHandler } from "../utils/error.js";
+const Reports =require("../models/report.model.js");
+const User =require("../models/user.model.js");
+const { errorHandler } =require("../utils/error.js");
 
-export const createReport = async (req, res, next) => {
+const createReport = async (req, res, next) => {
   if (!req.user || (req.user.role !== "admin" && req.user.role !== "staff")) {
     return next(errorHandler(403, "You are not allowed to create a post"));
   }
@@ -25,7 +25,7 @@ export const createReport = async (req, res, next) => {
   }
 };
 
-export const getReports = async (req, res) => {
+const getReports = async (req, res) => {
   if (!req.user || (req.user.role !== "admin" && req.user.role !== "staff")) {
     return res.status(403).json({ message: "Forbidden" });
   }
@@ -76,3 +76,5 @@ export const getReports = async (req, res) => {
   }
 
 };
+
+module.exports ={createReport, getReports}

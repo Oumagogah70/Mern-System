@@ -1,7 +1,7 @@
-import Payments from "../models/payments.model.js";
-import User from "../models/user.model.js";
+const Payments =require("../models/payments.model.js");
+const User =require("../models/user.model.js");
 
-export const createPayments = async (req, res) => {
+const createPayments = async (req, res) => {
   try {
     const {
       type,
@@ -37,7 +37,7 @@ export const createPayments = async (req, res) => {
   }
 };
 
-export const getPayments = async (req, res) => {
+const getPayments = async (req, res) => {
     if (!req.user || (req.user.role !== "admin" && req.user.role !== "staff")) {
       return res.status(403).json({ message: "Forbidden" });
     }
@@ -85,4 +85,6 @@ export const getPayments = async (req, res) => {
       console.error(error);
       return res.status(500).json({ message: "Server error" });
     }
-  };
+};
+
+module.exports ={createPayments, getPayments};

@@ -1,16 +1,15 @@
-import passport from "passport";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import User from "../models/user.model.js";
-import dotenv, { config } from 'dotenv';
-dotenv.config()
+require('dotenv/config.js');
+const passport =require( "passport");
+const { Strategy, ExtractJwt } =require("passport-jwt");
+const User =require("../models/user.model.js");
 
 const opts = {
     jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey:process.env.JWT_SECRET,
 };
 
-export default passport.use(
-    new JwtStrategy(opts, async(jwtPayload,done)=>{
+module.exports =passport.use(
+    new Strategy(opts, async(jwtPayload,done)=>{
         try {
             const user = await User.findById(jwtPayload.id);
             if(user){
