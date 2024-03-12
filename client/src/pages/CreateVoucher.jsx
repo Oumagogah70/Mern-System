@@ -1,264 +1,97 @@
-import React, { useState, useEffect } from "react";
+import { Helmet } from 'react-helmet';
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Select } from "flowbite-react";
 import { useSelector } from "react-redux";
-// import { Configuration, SmsApi } from 'infobip-node';
+import { fetch_users } from "../api/user-api";
+import { add_voucher } from "../api/vouchers-api";
+import { Form, Table, Loader, Toast } from "../components";
 
 export default function CreateVoucher() {
-  const currentUser = useSelector((state) => state.user.currentUser);
-  const [items, setItems] = useState([]);
-  const [itemName, setItemName] = useState("");
-  const [itemDescription, setItemDescription] = useState("");
-  const [itemPrice, setItemPrice] = useState(0);
-  const [itemQuantity, setItemQuantity] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [totalQuantity, setTotalQuantity] = useState(0);
-  const [person, setPerson] = useState([]);
-  const [selectedPerson, setSelectedPerson] = useState("");
+
   const navigate = useNavigate();
+  const [toast, setToast] =useState(null);
+  const [items, setItems] = useState([]);
+  const [adding, setAdding] =useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [resetForm, setResetForm] =useState(false);
+  const [submiting, setSubmiting] =useState(false);
+  const [displayItems, setDisplayItems] = useState([]);
+  const currentUser = useSelector((state) => state.user.currentUser);
+  
+  const voucherFields =[
+    {name: 'name', type: 'text', label: 'Item', required: true, placeholder: 'Item name', validations: {required: {value: true, message: "Item name must be provided"}}},
+    {name: 'price', type: 'number', label: 'Price', required: true, placeholder: 'Item unit price', validations: {required: {value: true, message: "Item price is required"}}},
+    {name: 'quantity', type: 'number', label: 'Quantity', required: true, placeholder: 'Number of items', validations: {required: {value: true, message: "Please provide items count"}}},
+    {name: 'description', type: 'textarea', label: 'Description', required: true, placeholder: 'Short a description about item', validations: {required: {value: true, message: "Item description is required"}}},
+  ]
+  const recipientFields =[
+    {name: 'recipient_id', type: 'select', choices: customers, placeholder: 'Select recipient', required: true, validations: {required: {value: true, message: "Please select recipient"}}},
+  ];
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch(`/api/perdm/getusersperdm`);
-        const data = await res.json();
-        setPerson(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchUsers();
+    (async () =>{
+      const {message, data} =await fetch_users();
+      if(!message){data.sort(); setCustomers(data.map(({_id, names}) =>({value: _id, text: names})));}
+      else console.log(message);
+    })();
+    return () =>{
+      setToast(null); 
+    }
   }, []);
-  const addItemToList = () => {
-    if (itemName && itemPrice > 0 && itemQuantity > 0) {
-      const newItem = {
-        name: itemName,
-        price: itemPrice,
-        quantity: itemQuantity,
-        description: itemDescription,
-      };
-      setItems([...items, newItem]);
-      setTotalPrice((prevPrice) => prevPrice + itemPrice * itemQuantity);
-      setTotalQuantity((prevQuantity) => prevQuantity + itemQuantity);
-      setItemName("");
-      setItemDescription("");
-      setItemPrice(0);
-      setItemQuantity(0);
-    } else {
-      alert("Please enter valid item details.");
-    }
+
+
+  const removeItem = item => setDisplayItems([...displayItems.filter(row => row !=item)])
+  const calculateItemTotal = ({price, quantity}) => price * quantity;
+
+  const addItemToList = async values =>{
+    setAdding(true)
+    setItems([...items, values]);
+    setDisplayItems([...displayItems, values]);
+    setResetForm(true);
+    setAdding(false)
   };
 
-  const removeItem = (indexToRemove) => {
-    const updatedItems = items.filter((_, index) => index !== indexToRemove);
-    setItems(updatedItems);
-    // Recalculate total price and total quantity
-    const updatedTotalPrice = updatedItems.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-    );
-    const updatedTotalQuantity = updatedItems.reduce(
-      (acc, item) => acc + item.quantity,
-      0
-    );
-    setTotalPrice(updatedTotalPrice);
-    setTotalQuantity(updatedTotalQuantity);
-  };
 
-  const calculateItemTotal = (item) => {
-    return item.price * item.quantity;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleCreateVoucher = async values => {
+    setToast(null);
+    setSubmiting(true);
     try {
-      const data = {
-        items: items,
-        itemPrice: itemPrice,
-        itemQuantity: itemQuantity,
-        totalPrice: totalPrice,
-        totalQuantity: totalQuantity,
-        sentTo: selectedPerson,
-        sentBy: currentUser?.username || " ",
-      };
-      console.log(data);
-      const resUser = await fetch(`/api/user/${selectedPerson}`);
-      const userData = await resUser.json();
-      const contactNumber = userData.contact;
-      console.log(contactNumber);
-      const res = await fetch("/api/voucher/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (res.ok) {
-        // Send SMS notification
-        const smsBody = `Your voucher has been created with items: ${items
-          .map((item) => `${item.name} (${item.quantity} x ${item.price})`)
-          .join(", ")}. Total Price: Ksh ${totalPrice}/=`;
-        await fetch("/api/sms/send-sms", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ phone: contactNumber, message: smsBody }),
-        });
-
-        //handle succesful response
-        alert("Voucher saved");
+      const data ={sender_id: currentUser?._id, payload: items, ...values};
+      const {type, message} =await add_voucher(data); 
+      setToast({type, message});
+      if(type =='success') {
         setItems([]);
-        setTotalPrice(0);
-        setTotalQuantity(0);
-        setPerson("");
-
-        //Redirect to dashboard
-        navigate("/dashboard?tab=voucher");
-      } else {
-        //handle error response
-        const errData = await res.json();
-        alert("failed to add voucher");
+        navigate('/dashboard', {replace: true});
       }
-    } catch (error) {
+    } catch ({message}) {
       console.error("Failed to save items", error);
-      alert("Failed to save tems.please try again later");
     }
-    setPerson([]);
+    setSubmiting(false);
   };
 
   return (
-    <div className="p-3 max-w-3xl mx-auto min-h-screen">
-      <h1 className="text-center text-3xl my-7 font-semibold">
-        Create Voucher
-      </h1>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <div className="relative z-0 w-full mb-5 group">
-          <Select
-            name="userName"
-            value={selectedPerson}
-            onChange={(e) => setSelectedPerson(e.target.value)}
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          >
-            {person.map((user) => (
-              <option key={user._id} value={user.name}>
-                {user.username}
-              </option>
-            ))}
-          </Select>
-          <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-            Person:
-          </label>
+    <>
+      <Helmet>
+        <title>Add Voucher</title>
+      </Helmet>
+      <h2 className='text-center py-5 text-3xl uppercase font-[700]'>Create Voucher</h2>
+      <div className="px-12 py-5 grid grid-cols-2 gap-8">
+        <Form onSubmit={addItemToList} inputs={voucherFields} setResetForm={setResetForm} resetForm={resetForm}>
+          {adding? (<Loader />) : (<button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add Item</button>)}
+        </Form>
+        <div className="px-8">
+          {displayItems.length? (<h2 className='uppercase pb-5 text-lg font-[700]'>Summary</h2>): null}
+          <Table empty_message='No items added yet' data={displayItems} onRemove={removeItem}/>
+          {displayItems.length? (<div className="pt-5">
+            <h2 className='font-[600] uppercase text-lg pb-5'>Total Cost: {displayItems.reduce((accumulator, item) =>{
+              return accumulator +calculateItemTotal(item)
+            }, 0)}</h2>
+            <Form inputs={recipientFields} onSubmit={handleCreateVoucher}>
+            {submiting? (<Loader message ="Saving ..."/>) :(<button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>)}
+          </Form></div>): <></>}
         </div>
-        <div className="relative z-0 w-full mb-5 group">
-          <input
-            type="text"
-            value={itemName}
-            onChange={(e) => setItemName(e.target.value)}
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          />
-          <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-            Item Name:
-          </label>
-        </div>
-        <div className="relative z-0 w-full mb-5 group">
-          <textarea
-            type="text"
-            value={itemDescription}
-            onChange={(e) => setItemDescription(e.target.value)}
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          />
-          <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-            Item Description:
-          </label>
-        </div>
-        <div className="relative z-0 w-full mb-5 group">
-          <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-            Item Price:
-          </label>
-          <input
-            type="number"
-            value={itemPrice}
-            onChange={(e) => setItemPrice(parseFloat(e.target.value))}
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          />
-        </div>
-        <div className="relative z-0 w-full mb-5 group">
-          <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-            Item Quantity:
-          </label>
-          <input
-            type="number"
-            value={itemQuantity}
-            onChange={(e) => setItemQuantity(parseInt(e.target.value))}
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          />
-        </div>
-        <button
-          type="button"
-          onClick={addItemToList}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Add Item
-        </button>
-        <div className="relative overflow-x-auto">
-          <h5 className="text-center text-3xl my-7 font-semibold">
-            Items List
-          </h5>
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3 ">
-                  Item Name
-                </th>
-                <th scope="col" className="px-6 py-3 ">
-                  Item description
-                </th>
-                <th scope="col" className="px-6 py-3 ">
-                  Item Price
-                </th>
-                <th scope="col" className="px-6 py-3 ">
-                  Item Quantity
-                </th>
-                <th scope="col" className="px-6 py-3 ">
-                  Total
-                </th>
-                <th scope="col" className="px-6 py-3 ">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item, index) => (
-                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                  <td className="px-6 py-4">{item.name}</td>
-                  <td className="px-6 py-4">{item.description}</td>
-                  <td className="px-6 py-4">{item.price}</td>
-                  <td className="px-6 py-4">{item.quantity}</td>
-                  <td className="px-6 py-4">{calculateItemTotal(item)}</td>
-                  <td>
-                    {" "}
-                    <button type="button" onClick={() => removeItem(index)}>
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div>
-          <p>Total Price: {totalPrice}</p>
-          <p>Total Quantity: {totalQuantity}</p>
-        </div>
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Submit
-        </button>
-      </form>
-    </div>
+      </div>
+      {toast?(<Toast toast_type={toast.type} label={toast.message}/>): (<></>)}
+    </>
   );
 }
